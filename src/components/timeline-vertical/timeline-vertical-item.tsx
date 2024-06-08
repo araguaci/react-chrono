@@ -11,10 +11,36 @@ import {
   VerticalItemWrapper,
 } from './timeline-vertical.styles';
 
+/**
+ * VerticalItem
+ * @property {boolean} active - Whether the vertical item is active.
+ * @property {boolean} alternateCards - Whether to alternate cards.
+ * @property {string} cardDetailedText - The detailed text of the card.
+ * @property {string} cardSubtitle - The subtitle of the card.
+ * @property {string} cardTitle - The title of the card.
+ * @property {string} url - The URL of the card.
+ * @property {string} className - The class name for the component.
+ * @property {React.ReactNode} contentDetailsChildren - The content details children nodes.
+ * @property {React.ReactNode} iconChild - The icon child nodes.
+ * @property {boolean} hasFocus - Whether the vertical item has focus.
+ * @property {string} id - The id of the vertical item.
+ * @property {React.ReactNode} media - The media nodes.
+ * @property {() => void} onActive - Function to handle active event.
+ * @property {() => void} onClick - Function to handle click event.
+ * @property {() => void} onElapsed - Function to handle elapsed event.
+ * @property {boolean} slideShowRunning - Whether the slideshow is running.
+ * @property {string} title - The title of the vertical item.
+ * @property {boolean} visible - Whether the vertical item is visible.
+ * @property {React.ReactNode} timelineContent - The timeline content nodes.
+ * @property {Array} items - The items of the vertical item.
+ * @property {boolean} isNested - Whether the vertical item is nested.
+ * @property {number} nestedCardHeight - The height of the nested card.
+ * @returns {JSX.Element} The VerticalItem component.
+ */
 const VerticalItem: React.FunctionComponent<VerticalItemModel> = (
   props: VerticalItemModel,
 ) => {
-  const contentRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLLIElement>(null);
 
   const {
     active,
@@ -41,13 +67,6 @@ const VerticalItem: React.FunctionComponent<VerticalItemModel> = (
     nestedCardHeight,
   } = props;
 
-  const handleOnActive = (offset: number) => {
-    if (contentRef.current) {
-      const { offsetTop, clientHeight } = contentRef.current;
-      onActive(offsetTop + offset, offsetTop, clientHeight);
-    }
-  };
-
   const {
     cardHeight,
     mode,
@@ -60,14 +79,27 @@ const VerticalItem: React.FunctionComponent<VerticalItemModel> = (
     classNames,
     textOverlay,
     mediaHeight,
+    disableInteraction,
+    isMobile,
   } = useContext(GlobalContext);
+
+  // handler for onActive
+  const handleOnActive = useCallback(
+    (offset: number) => {
+      if (contentRef.current) {
+        const { offsetTop, clientHeight } = contentRef.current;
+        onActive(offsetTop + offset, offsetTop, clientHeight);
+      }
+    },
+    [onActive],
+  );
 
   // handler for read more
   const handleShowMore = useCallback(() => {
     setTimeout(() => {
       handleOnActive(0);
     }, 100);
-  }, []);
+  }, [handleOnActive]);
 
   // timeline title
   const Title = useMemo(() => {
@@ -77,23 +109,32 @@ const VerticalItem: React.FunctionComponent<VerticalItemModel> = (
         $alternateCards={alternateCards}
         mode={mode}
         $hide={!title}
-        $flip={flipLayout}
+        $flip={!alternateCards && flipLayout}
       >
         <TimelineItemTitle
           title={title}
-          active={active}
+          active={active && !disableInteraction}
           theme={theme}
           align={flipLayout ? 'left' : 'right'}
           classString={classNames?.title}
-        />
+        />{' '}
       </TimelineTitleWrapper>
     );
-  }, [active]);
+  }, [
+    active,
+    title,
+    className,
+    alternateCards,
+    mode,
+    flipLayout,
+    theme,
+    classNames,
+  ]);
 
   const verticalItemClass = useMemo(
     () =>
       cls({ [className]: true }, 'vertical-item-row', visible ? 'visible' : ''),
-    [],
+    [className, visible],
   );
 
   const contentClass = cls('card-content-wrapper', visible ? 'visible' : '', {
@@ -117,10 +158,30 @@ const VerticalItem: React.FunctionComponent<VerticalItemModel> = (
         lineWidth={lineWidth}
         disableClickOnCircle={disableClickOnCircle}
         cardLess={cardLess}
+        isMobile={isMobile}
       />
     ),
-    [slideShowRunning, active],
+    [
+      slideShowRunning,
+      active,
+      alternateCards,
+      className,
+      id,
+      mode,
+      handleOnActive,
+      onClick,
+      iconChild,
+      timelinePointDimension,
+      lineWidth,
+      disableClickOnCircle,
+      cardLess,
+      isMobile,
+    ],
   );
+
+  const canShowTitle = useMemo(() => {
+    return !isNested && !isMobile;
+  }, [isNested, isMobile]);
 
   return (
     <VerticalItemWrapper
@@ -131,20 +192,20 @@ const VerticalItem: React.FunctionComponent<VerticalItemModel> = (
       key={id}
       ref={contentRef}
       $cardLess={cardLess}
-      role="listitem"
       $isNested={isNested}
       theme={theme}
     >
       {/* title */}
-      {!isNested ? Title : null}
+      {canShowTitle ? Title : null}
 
       {/* card section */}
       <TimelineCardContentWrapper
         className={contentClass}
         $alternateCards={alternateCards}
         $noTitle={!title}
-        $flip={flipLayout}
+        $flip={!alternateCards && flipLayout}
         height={textOverlay ? mediaHeight : cardHeight}
+        $isMobile={isMobile}
       >
         {!cardLess ? (
           // <span></span>
@@ -162,13 +223,14 @@ const VerticalItem: React.FunctionComponent<VerticalItemModel> = (
             onShowMore={handleShowMore}
             slideShowActive={slideShowRunning}
             theme={theme}
-            title={cardTitle}
             url={url}
-            flip={flipLayout}
+            flip={!alternateCards && flipLayout}
             timelineContent={timelineContent}
             items={items}
             isNested={isNested}
             nestedCardHeight={nestedCardHeight}
+            title={cardTitle}
+            cardTitle={title}
           />
         ) : null}
       </TimelineCardContentWrapper>

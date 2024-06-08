@@ -1,5 +1,5 @@
 import { Theme } from '@models/Theme';
-import { TimelineProps } from '@models/TimelineModel';
+import { TextDensity, TimelineProps } from '@models/TimelineModel';
 import styled, { css, keyframes } from 'styled-components';
 import { linearGradient } from '../timeline-card-media/timeline-card-media.styles';
 import {
@@ -19,6 +19,8 @@ export const TimelineItemContentWrapper = styled.section<
     $active?: boolean;
     $borderLessCards?: TimelineProps['borderLessCards'];
     $branchDir?: string;
+    $customContent?: boolean;
+    $highlight?: boolean;
     $isNested?: boolean;
     $maxWidth?: number;
     $minHeight?: number;
@@ -26,12 +28,13 @@ export const TimelineItemContentWrapper = styled.section<
     $slideShow?: TimelineProps['slideShow'];
     $slideShowActive?: boolean;
     $slideShowType?: TimelineProps['slideShowType'];
+    $textDensity?: TextDensity;
     $textOverlay?: boolean;
   } & ContentT
 >`
   align-items: flex-start;
   background: ${(p) => p.theme.cardBgColor};
-  border-radius: 4px;
+  border-radius: 8px;
   display: flex;
   position: absolute;
   ${({ borderLessCards }) =>
@@ -43,11 +46,38 @@ export const TimelineItemContentWrapper = styled.section<
   line-height: 1.5em;
   margin: ${(p) => (p.mode === 'HORIZONTAL' ? '0 auto' : '')};
   max-width: ${(p) => p.$maxWidth}px;
-  min-height: ${(p) => p.$minHeight}px;
+  // min-height: ${(p) => p.$minHeight}px;
+  ${({ $textDensity, $customContent, $minHeight }) => css`
+    ${$textDensity === 'HIGH'
+      ? `${$customContent ? 'height' : 'min-height'}: ${$minHeight}px`
+      : ''};
+  `}
+  ${(p) => (p.$textOverlay ? `min-height: ${p.$minHeight}px` : '')};
   position: relative;
   text-align: left;
   width: 98%;
   z-index: 0;
+
+  ${(p) =>
+    p.$highlight
+      ? css`
+          &:hover {
+            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3)) brightness(1.05);
+
+            &::before {
+              content: '';
+              height: 100%;
+              left: 0;
+              position: absolute;
+              top: 0;
+              width: 100%;
+              z-index: -1;
+              border: 2px solid ${p.theme.primary};
+              border-radius: 4px;
+            }
+          }
+        `
+      : css``}
 
   ${(p) =>
     p.$isNested
@@ -110,7 +140,7 @@ export const TimelineItemContentWrapper = styled.section<
 
 export const TimelineCardHeader = styled.header`
   width: 100%;
-  padding: 0.5rem 0.5rem 0 0.5rem;
+  padding: 0.5rem;
 `;
 
 export const CardSubTitle = styled.h2<{
@@ -137,10 +167,10 @@ export const CardTitle = styled.h1<{
   color: ${(p) => p.theme.cardTitleColor};
   font-size: ${(p) => p.$fontSize};
   font-weight: 600;
-  margin: 0;
+  margin: 0.25rem 0 0.5rem 0;
   text-align: left;
   width: 95%;
-  padding: ${(p) => (p.$padding ? '0.25rem 0 0.25rem 0.5rem;' : '')} &.active {
+  padding: ${(p) => (p.$padding ? '0.2rem 0 0.25rem 0.5rem;' : '')} &.active {
     color: ${(p) => p.theme.primary};
   }
 `;
@@ -194,7 +224,7 @@ export const TimelineContentDetailsWrapper = styled.div<{
   ${({ $useReadMore, $customContent, $showMore, height = 0, $textOverlay }) =>
     $useReadMore && !$customContent && !$showMore && !$textOverlay
       ? `max-height: ${height}px;`
-      : ''}
+      : 'height: 100%'}
   ${({
     $cardHeight = 0,
     $contentHeight = 0,
@@ -214,16 +244,18 @@ export const TimelineContentDetailsWrapper = styled.div<{
     p.$borderLess ? 'calc(100% - 0.5rem)' : 'calc(95% - 0.5rem)'};
   padding: 0.25rem 0.25rem;
 
+  ${(p) => (p.$customContent ? `height: 100%;` : '')}
+
   $${({
-      height = 0,
-      $cardHeight = 0,
-      $contentHeight = 0,
-      $showMore,
-      $useReadMore,
-    }) =>
-      $showMore && $useReadMore && $cardHeight
-        ? css`
-            animation: ${keyframes`
+    height = 0,
+    $cardHeight = 0,
+    $contentHeight = 0,
+    $showMore,
+    $useReadMore,
+  }) =>
+    $showMore && $useReadMore && $cardHeight
+      ? css`
+          animation: ${keyframes`
             0% {
               max-height: ${height}px;
             }
@@ -231,8 +263,8 @@ export const TimelineContentDetailsWrapper = styled.div<{
              max-height: ${$cardHeight + $contentHeight - height}px;
             }
           `} 0.25s ease-in-out;
-          `
-        : ''}
+        `
+      : ''}
     &::-webkit-scrollbar {
     width: 0.3em;
   }
@@ -259,7 +291,10 @@ export const TimelineContentDetailsWrapper = styled.div<{
   ${linearGradient}
 `;
 
-export const ShowMore = styled.span<{ show?: 'true' | 'false'; theme?: Theme }>`
+export const ShowMore = styled.button<{
+  show?: 'true' | 'false';
+  theme?: Theme;
+}>`
   align-items: center;
   align-self: flex-end;
   border-radius: 4px;
@@ -273,6 +308,8 @@ export const ShowMore = styled.span<{ show?: 'true' | 'false'; theme?: Theme }>`
   margin-top: auto;
   padding: 0.25em;
   color: ${(p) => p.theme.primary};
+  border: 0;
+  background: none;
 
   &:hover {
     text-decoration: underline;
@@ -288,7 +325,7 @@ const slideAnimation = (start?: number, end?: number) => keyframes`
   }
 `;
 
-export const SlideShowProgressBar = styled.span<{
+export const SlideShowProgressBar = styled.progress<{
   $color?: string;
   $duration?: number;
   $paused?: boolean;
@@ -302,7 +339,8 @@ export const SlideShowProgressBar = styled.span<{
   left: 50%;
   transform: translateX(-50%);
   position: absolute;
-  border-radius: 2px;
+  border-radius: 2px;gggg
+  border: 0;
 
   ${(p) => {
     if (p.$paused) {

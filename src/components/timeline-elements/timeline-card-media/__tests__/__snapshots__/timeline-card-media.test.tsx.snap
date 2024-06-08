@@ -3,32 +3,32 @@
 exports[`Timeline Card media > should match the snapshot ( IMAGE ) 1`] = `
 <div>
   <div
-    class="sc-bdvumH jZTlyR card-media-wrapper card-media"
+    class="sc-beySPh hsHWWE card-media-wrapper card-media"
     mode="VERTICAL_ALTERNATING"
   >
     <div
-      class="sc-furuVn kGMLSJ"
+      class="sc-fsYfdN hAnbPb"
       height="200"
     >
       <img
         alt="Image"
-        class="sc-gsDKeI jKDPzG"
+        class="sc-guDLey jFXNyy"
+        data-testid="timeline-card-content-image"
         loading="lazy"
         mode="VERTICAL_ALTERNATING"
-        role="img"
         src="https://picsum.photos/200/300"
       />
     </div>
   </div>
   <div
-    class="sc-hKwBBi exUSSb"
+    class="sc-hLQSwg dUlHXh"
     mode="VERTICAL_ALTERNATING"
   >
     <div
-      class="sc-iCfKOy jOJMEV"
+      class="sc-iBdnpw bYRNiQ"
     />
     <h2
-      class="sc-kDTiHp gBrmxq card-sub-title card-subtitle"
+      class="sc-eTNRI jGoBGF card-sub-title card-subtitle"
     >
       This is another test
     </h2>
@@ -39,27 +39,28 @@ exports[`Timeline Card media > should match the snapshot ( IMAGE ) 1`] = `
 exports[`Timeline Card media > should match the snapshot ( VIDEO ) 1`] = `
 <div>
   <div
-    class="sc-bdvumH jZTlyR card-media-wrapper card-media"
+    class="sc-beySPh hsHWWE card-media-wrapper card-media"
     mode="VERTICAL_ALTERNATING"
   >
     <iframe
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen=""
-      class="sc-jRQBzY jbpMTS"
+      class="sc-jTQCzO keBlVV"
+      data-testid="timeline-card-content-video"
       frameborder="0"
       src="https://www.youtube.com/watch?v=9bZkp7q19f0?enablejsapi=1"
       title="Video"
     />
   </div>
   <div
-    class="sc-hKwBBi exUSSb"
+    class="sc-hLQSwg dUlHXh"
     mode="VERTICAL_ALTERNATING"
   >
     <div
-      class="sc-iCfKOy jOJMEV"
+      class="sc-iBdnpw bYRNiQ"
     />
     <h2
-      class="sc-kDTiHp gBrmxq card-sub-title card-subtitle"
+      class="sc-eTNRI jGoBGF card-sub-title card-subtitle"
     >
       This is another test
     </h2>

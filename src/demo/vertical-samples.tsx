@@ -10,6 +10,7 @@ export const VerticalTree: FunctionComponent<{
   type: string;
   items: TimelineItemModel[];
   theme: Theme;
+  children: React.ReactNode | React.ReactNode[]
 }> = ({ type, items, theme }) => {
   return (
     <Vertical id="tree">
@@ -22,15 +23,17 @@ export const VerticalTree: FunctionComponent<{
           slideItemDuration={2050}
           slideShowType="slide_from_sides"
           allowDynamicUpdate
-          cardHeight={300}
+          cardHeight={200}
+          disableToolbar
           // textOverlay
           focusActiveItemOnLoad
           enableDarkToggle
-          cardWidth={450}
-          onItemSelected={(selected) => console.log(selected.cardTitle)}
+          cardWidth={400}
+          onItemSelected={(selected) => console.log(selected)}
           onScrollEnd={() => console.log('end reached')}
-          verticalBreakPoint={1920}
           enableBreakPoint
+          highlightCardsOnHover
+          contentDetailsHeight={200}
         >
           <div className="chrono-icons">
             <img
@@ -101,12 +104,13 @@ export const VerticalTreeMixed: FunctionComponent<{
       <Chrono
         items={dataMixed}
         mode="VERTICAL_ALTERNATING"
-        cardHeight={300}
+        cardHeight={400}
         cardWidth={450}
         scrollable
         slideShow
         slideItemDuration={2500}
         enableDarkToggle
+        parseDetailsAsHTML
       />
     </ComponentContainerTree>
   </Vertical>
@@ -126,7 +130,11 @@ export const VerticalBasic: FunctionComponent<{
         slideItemDuration={2500}
         scrollable={{ scrollbar: false }}
         noUniqueId
-        uniqueID="vertical_basic_test"
+        uniqueId="vertical_basic_test"
+        parseDetailsAsHTML
+        highlightCardsOnHover
+        enableQuickJump={true}
+        toolbarPosition='top'
         // textOverlay
         // borderLessCards
         // theme={{
@@ -135,8 +143,7 @@ export const VerticalBasic: FunctionComponent<{
         //   titleColor: '#922724',
         //   cardDetailsBackGround: '#e8e8e8',
         // }}
-        onItemSelected={(selected) => console.log(selected.cardTitle)}
-        enableOutline
+        onItemSelected={(selected) => console.log(selected.index)}
         fontSizes={{
           title: '1.5rem',
         }}
@@ -158,6 +165,8 @@ export const VerticalBasic: FunctionComponent<{
           imageFit: 'cover',
         }}
         enableDarkToggle
+        enableBreakPoint={true}
+        responsiveBreakPoint={768}
       />
     </ComponentContainerTree>
   </Vertical>
@@ -180,6 +189,7 @@ export const VerticalNewMedia: FunctionComponent<{
             slideItemDuration={2000}
             scrollable={{ scrollbar: false }}
             textOverlay
+            parseDetailsAsHTML
             // slideShowType="reveal"
             // borderLessCards
             // theme={{
@@ -190,8 +200,7 @@ export const VerticalNewMedia: FunctionComponent<{
             //   cardDetailsColor: '#000',
             // }}
             // darkMode
-            onItemSelected={(selected) => console.log(selected.cardTitle)}
-            // enableOutline
+            onItemSelected={(selected) => console.log(selected.index)}
             fontSizes={{
               title: '1.5rem',
             }}
@@ -239,6 +248,8 @@ export const VerticalAlternatingNested: FunctionComponent<{
             mediaSettings={{
               imageFit: 'contain',
             }}
+            highlightCardsOnHover
+            parseDetailsAsHTML
             // borderLessCards
             // theme={{
             //   cardBgColor: '#fff',
@@ -248,8 +259,7 @@ export const VerticalAlternatingNested: FunctionComponent<{
             //   cardDetailsColor: '#000',
             // }}
             // darkMode
-            onItemSelected={(selected) => console.log(selected.cardTitle)}
-            // enableOutline
+            onItemSelected={(selected) => console.log(selected.index)}
             fontSizes={{
               title: '1rem',
             }}
@@ -345,11 +355,12 @@ export const VerticalBasicCardLess: FunctionComponent<{
         items={items}
         mode="VERTICAL"
         cardLess
+        parseDetailsAsHTML
         theme={{
           cardBgColor: '#fff',
           titleColorActive: 'red',
         }}
-        onItemSelected={(selected) => console.log(selected.cardTitle)}
+        onItemSelected={(selected) => console.log(selected.index)}
       />
     </ComponentContainerTree>
   </Vertical>
@@ -376,8 +387,7 @@ export const VerticalBasicNested: FunctionComponent<{
         //   titleColor: '#922724',
         //   cardDetailsBackGround: '#e8e8e8',
         // }}
-        onItemSelected={(selected) => console.log(selected.cardTitle)}
-        enableOutline
+        onItemSelected={(selected) => console.log(selected.index)}
         fontSizes={{
           title: '1rem',
         }}
@@ -393,6 +403,7 @@ export const VerticalBasicNested: FunctionComponent<{
         classNames={{
           cardText: 'custom-text',
         }}
+        parseDetailsAsHTML
         enableDarkToggle
         mediaSettings={{ align: 'center' }}
       />

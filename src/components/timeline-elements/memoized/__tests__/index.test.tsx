@@ -1,7 +1,11 @@
+import { forwardRef } from 'react';
 import { vi } from 'vitest';
-import { DetailsTextMemo, SubTitleMemo, TitleMemo } from '../';
 import { customRender } from '../../../common/test';
 import { providerProps } from '../../../common/test/index';
+import { TextOrContentModel } from '../../timeline-card-content/text-or-content';
+import { DetailsTextMemo } from '../details-text-memo';
+import { SubTitleMemo } from '../subtitle-memo';
+import { TitleMemo } from '../title-memo';
 
 describe('Title', () => {
   it('should render title', () => {
@@ -92,12 +96,16 @@ describe('Details Text', () => {
   // should render the details text
   it('should render the details text', async () => {
     const onRender = vi.fn();
+    const fn = forwardRef<HTMLSpanElement, TextOrContentModel>(() => (
+      <span>details text</span>
+    ));
+    fn.displayName = 'test';
 
     const { getByText } = customRender(
       <DetailsTextMemo
         show
         expand
-        text="details text"
+        text={fn}
         height={100}
         onRender={onRender}
         textOverlay

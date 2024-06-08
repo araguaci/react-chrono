@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const TimelinePointWrapper = styled.div<{
   $cardLess?: boolean;
+  $isMobile?: boolean;
   bg?: string;
   width?: number;
 }>`
@@ -9,7 +10,7 @@ export const TimelinePointWrapper = styled.div<{
   display: flex;
   justify-content: center;
   position: relative;
-  width: ${(p) => (p.$cardLess ? '5%' : '10%')};
+  width: ${(p) => (p.$isMobile ? '25%' : '10%')};
 
   &.left {
     order: 2;
@@ -44,7 +45,10 @@ export const TimelinePointWrapper = styled.div<{
   }
 `;
 
-export const TimelinePointContainer = styled.div`
+export const TimelinePointContainer = styled.button<{ $hide?: boolean }>`
   position: relative;
   z-index: 1;
+  visibility: ${(p) => (p.$hide ? 'hidden' : 'visible')};
+  background: none;
+  border: 0;
 `;

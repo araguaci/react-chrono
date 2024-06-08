@@ -4,7 +4,7 @@ import { RefObject } from 'react';
 
 export type ContentHeaderProps = Pick<
   TimelineContentModel,
-  'theme' | 'url' | 'title' | 'media' | 'content'
+  'theme' | 'url' | 'title' | 'media' | 'content' | 'cardTitle'
 >;
 
 export type ContentFooterProps = {
@@ -13,7 +13,7 @@ export type ContentFooterProps = {
   isResuming?: boolean;
   onExpand: () => void;
   paused: boolean;
-  progressRef: RefObject<HTMLDivElement>;
+  progressRef: RefObject<HTMLProgressElement>;
   remainInterval: number;
   showMore: boolean;
   showProgressBar?: boolean;

@@ -1,14 +1,14 @@
 import { TimelineItemModel } from '@models/TimelineItemModel';
 import { TimelineProps } from '@models/TimelineModel';
+import { getUniqueID } from '@utils/index';
 import dayjs from 'dayjs';
-import 'focus-visible';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import GlobalContextProvider from './GlobalContext';
 import Timeline from './timeline/timeline';
 const toReactArray = React.Children.toArray;
 
 const Chrono: React.FunctionComponent<Partial<TimelineProps>> = (
-  props: Partial<TimelineProps>,
+  props: TimelineProps,
 ) => {
   const {
     allowDynamicUpdate = false,
@@ -20,19 +20,17 @@ const Chrono: React.FunctionComponent<Partial<TimelineProps>> = (
     activeItemIndex = 0,
     titleDateFormat = 'MMM DD, YYYY',
     mode,
-    enableOutline,
-    hideControls,
   } = props;
 
-  const [timeLineItems, setItems] = useState<TimelineItemModel[]>([]);
+  const [timeLineItems, setTimeLineItems] = useState<TimelineItemModel[]>([]);
   const timeLineItemsRef = useRef<TimelineItemModel[]>();
-  const [slideShowActive, setSlideshowActive] = useState(false);
+  const [slideShowActive, setSlideShowActive] = useState(false);
   const [activeTimelineItem, setActiveTimelineItem] = useState(activeItemIndex);
 
   const initItems = (lineItems?: TimelineItemModel[]): TimelineItemModel[] => {
-    if (lineItems && lineItems.length) {
+    if (lineItems?.length) {
       return lineItems.map((item, index) => {
-        const id = Math.random().toString(16).slice(2);
+        const id = getUniqueID();
 
         return {
           ...item,
@@ -42,7 +40,7 @@ const Chrono: React.FunctionComponent<Partial<TimelineProps>> = (
           items: item.items?.map((subItem) => ({
             ...subItem,
             _dayjs: dayjs(subItem.date),
-            id: Math.random().toString(16).slice(2),
+            id: getUniqueID(),
             isNested: true,
             visible: true,
           })),
@@ -60,7 +58,7 @@ const Chrono: React.FunctionComponent<Partial<TimelineProps>> = (
 
     return Array.from({ length: itemLength }).map((_, index) => ({
       active: index === activeItemIndex,
-      id: Math.random().toString(16).slice(2),
+      id: getUniqueID(),
       visible: true,
     }));
   };
@@ -72,7 +70,6 @@ const Chrono: React.FunctionComponent<Partial<TimelineProps>> = (
       return lineItems.map((item, index) => ({
         ...item,
         active: index === pos,
-        // id: Math.random().toString(16).slice(2),
         visible: true,
       }));
     } else {
@@ -86,7 +83,7 @@ const Chrono: React.FunctionComponent<Partial<TimelineProps>> = (
 
     if (!_items?.length) {
       const lineItems = initItems();
-      setItems(lineItems);
+      setTimeLineItems(lineItems);
       return;
     }
 
@@ -98,12 +95,13 @@ const Chrono: React.FunctionComponent<Partial<TimelineProps>> = (
 
     if (newItems.length) {
       timeLineItemsRef.current = newItems;
-      setItems(newItems);
+      setTimeLineItems(newItems);
+      setActiveTimelineItem(0);
     }
   }, [JSON.stringify(allowDynamicUpdate ? items : null)]);
 
   const handleTimelineUpdate = useCallback((actvTimelineIndex: number) => {
-    setItems((lineItems) =>
+    setTimeLineItems((lineItems) =>
       lineItems.map((item, index) => ({
         ...item,
         active: index === actvTimelineIndex,
@@ -115,7 +113,7 @@ const Chrono: React.FunctionComponent<Partial<TimelineProps>> = (
 
     if (items) {
       if (items.length - 1 === actvTimelineIndex) {
-        setSlideshowActive(false);
+        setSlideShowActive(false);
       }
     }
   }, []);
@@ -128,7 +126,7 @@ const Chrono: React.FunctionComponent<Partial<TimelineProps>> = (
     handleTimelineUpdate(-1);
 
     setTimeout(() => {
-      setSlideshowActive(true);
+      setSlideShowActive(true);
       handleTimelineUpdate(0);
     }, 0);
   }, []);
@@ -178,7 +176,7 @@ const Chrono: React.FunctionComponent<Partial<TimelineProps>> = (
   );
 
   const onPaused = useCallback(() => {
-    setSlideshowActive(false);
+    setSlideShowActive(false);
   }, []);
 
   let iconChildren = toReactArray(children).filter(
@@ -211,8 +209,6 @@ const Chrono: React.FunctionComponent<Partial<TimelineProps>> = (
         onItemSelected={onItemSelected}
         onOutlineSelection={handleOutlineSelection}
         mode={mode}
-        enableOutline={enableOutline}
-        hideControls={hideControls}
         onPaused={onPaused}
       />
     </GlobalContextProvider>

@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2019",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "target": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -21,24 +17,26 @@
     "rootDir": "src",
     "declaration": true,
     "declarationDir": "dist",
+    "baseUrl": ".",
     "types": [
       "node",
-      "@types/testing-library__jest-dom",
+      "@types/jest",
+      "@types/react",
+      "@types/react-dom",
+      "@testing-library/jest-dom"
     ],
     "paths": {
-      "@utils/*": [
-        "./src/utils/*"
-      ],
-      "@models/*": [
-        "./src/models/*"
-      ]
-    }
+      "@utils/*": ["src/utils/*"],
+      "@models/*": ["src/models/*"],
+      "@effects/*": ["src/effects/*"]
+    },
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules"
+      }
+    ]
   },
-  "include": [
-    "src/components",
-    "src/models",
-    "src/utils",
-  ],
+  "include": ["src/components", "src/models", "src/utils", "src/demo"],
   "exclude": [
     "node_modules",
     "dist",
@@ -46,7 +44,5 @@
     "cypress",
     "cypress.config.ts"
   ],
-  "files": [
-    "src/react-chrono.ts"
-  ]
+  "files": ["src/react-chrono.ts"]
 }

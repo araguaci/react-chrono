@@ -9,20 +9,23 @@ on:
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chrome, edge, firefox] # Define the browsers you want to test on
 
     steps:
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.x' # replace with the latest version of Node.js
+          node-version: '20.x' # replace with the latest version of Node.js
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8.1.0
+          version: 8.8.0
 
       - name: Cache PNPM dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
@@ -30,42 +33,24 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Cache Cypress binary cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/Cypress
           key: ${{ runner.os }}-cypress-binary
           restore-keys: |
             ${{ runner.os }}-cypress-
 
-      - name: Chrome
-        uses: cypress-io/github-action@v5.8.3
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6.6.1
         with:
           install: false
-          start: pnpm dev
-          wait-on: 'http://[::1]:4444'
-          wait-on-timeout: 200
-          browser: chrome
-
-      - name: Edge
-        uses: cypress-io/github-action@v5.8.3
-        with:
-          install: false
-          start: pnpm dev
-          wait-on: 'http://[::1]:4444'
-          wait-on-timeout: 200
-          browser: edge
-
-      - name: Firefox
-        uses: cypress-io/github-action@v5.8.3
-        with:
-          install: false
-          start: pnpm dev
-          wait-on: 'http://[::1]:4444'
-          wait-on-timeout: 200
-          browser: firefox
+          start: pnpm dev --host
+          wait-on: 'pnpx wait-on --timeout 60000 tcp:4444'
+          wait-on-timeout: 700
+          browser: ${{ matrix.browser }} # Use the browser from the matrix

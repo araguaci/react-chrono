@@ -1,5 +1,5 @@
 import { TimelineItemModel } from '@models/TimelineItemModel';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import Chrono from '../components';
 import {
   ComponentContainer,
@@ -13,8 +13,11 @@ export const HorizontalBasic: React.FunctionComponent<{
   type: string;
   items: TimelineItemModel[];
 }> = ({ items }) => {
+  const [itemSelected, setItemSelected] = useState(0);
+
   return (
     <Horizontal id="horizontal">
+      <span>{itemSelected}</span>
       <ComponentContainer type={'big-screen'}>
         <Chrono
           items={data}
@@ -25,10 +28,12 @@ export const HorizontalBasic: React.FunctionComponent<{
           slideShow
           slideItemDuration={2550}
           itemWidth={300}
-          onItemSelected={(selected) => console.log(selected)}
+          onItemSelected={(selected) => setItemSelected(selected.index)}
           timelinePointDimension={20}
           timelinePointShape="square"
+          // disableInteraction
           // cardPositionHorizontal="TOP"
+          parseDetailsAsHTML
           buttonTexts={{
             first: 'Jump to First',
             last: 'Jump to Last',
@@ -57,9 +62,11 @@ export const HorizontalAll: React.FunctionComponent<{
   type: string;
   items: TimelineItemModel[];
 }> = ({ items }) => {
+  const [index, setIndex] = React.useState(-1);
   return (
     <Horizontal id="horizontal">
       <ComponentContainer type={'big-screen'}>
+        <span>{index}</span>
         <Chrono
           items={items}
           mode="HORIZONTAL"
@@ -67,13 +74,14 @@ export const HorizontalAll: React.FunctionComponent<{
           cardWidth={500}
           enableDarkToggle
           slideShow
-          // slideShow
           textOverlay
           mediaHeight={250}
           slideItemDuration={2550}
           itemWidth={400}
           focusActiveItemOnLoad
-          onItemSelected={(selected) => console.log(selected)}
+          onItemSelected={(selected) => {
+            setIndex(selected.index);
+          }}
           timelinePointDimension={20}
           showAllCardsHorizontal
           activeItemIndex={8}

@@ -12,13 +12,11 @@ import React, {
   useState,
 } from 'react';
 import { GlobalContext } from '../../GlobalContext';
-import {
-  DetailsTextMemo,
-  ExpandButtonMemo,
-  ShowOrHideTextButtonMemo,
-  SubTitleMemo,
-  TitleMemo,
-} from '../memoized';
+import { DetailsTextMemo } from '../memoized/details-text-memo';
+import { ExpandButtonMemo } from '../memoized/expand-button-memo';
+import { ShowOrHideTextButtonMemo } from '../memoized/show-hide-button';
+import { SubTitleMemo } from '../memoized/subtitle-memo';
+import { TitleMemo } from '../memoized/title-memo';
 import {
   SlideShowProgressBar,
   TriangleIconWrapper,
@@ -139,6 +137,7 @@ const CardMedia: React.FunctionComponent<CardMediaModel> = ({
           active ? '?autoplay=1&enablejsapi=1' : '?enablejsapi=1'
         }`}
         title={media.name}
+        data-testid="timeline-card-content-video"
       />
     );
 
@@ -193,8 +192,8 @@ const CardMedia: React.FunctionComponent<CardMediaModel> = ({
         alt={media.name}
         loading={'lazy'}
         $enableBorderRadius={borderLessCards}
-        role="img"
         fit={mediaSettings?.imageFit}
+        data-testid="timeline-card-content-image"
       />
     );
   }, [mediaLoaded, borderLessCards]);
@@ -324,14 +323,16 @@ const CardMedia: React.FunctionComponent<CardMediaModel> = ({
           />
         )}
         {canShowTextMemo ? (
-          <DetailsTextMemo
-            theme={theme}
-            show={showText}
-            expand={expandDetails}
-            text={detailsText}
-            onRender={onDetailsTextRef}
-            textOverlay={textOverlay}
-          />
+          <>
+            <DetailsTextMemo
+              theme={theme}
+              show={showText}
+              expand={expandDetails}
+              text={detailsText}
+              onRender={onDetailsTextRef}
+              textOverlay={textOverlay}
+            />
+          </>
         ) : null}
       </MediaDetailsWrapper>
     );
@@ -383,7 +384,6 @@ const CardMedia: React.FunctionComponent<CardMediaModel> = ({
             $paused={paused}
             ref={progressRef}
             $startWidth={startWidth}
-            role="progressbar"
             $resuming={resuming}
           ></SlideShowProgressBar>
         ) : null}

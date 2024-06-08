@@ -6,7 +6,7 @@
 .pnp.js
 
 # testing
-/coverage
+# /coverage
 
 # production
 /build
@@ -33,9 +33,17 @@ debug
 cache
 .dccache
 .idea
+.tmp
 
 cypress/videos
 
 .scannerwork
-sonar-project.properties
+# sonar-project.properties
 react-app-tester
+
+react-test-bed
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build

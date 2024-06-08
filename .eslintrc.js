@@ -1,13 +1,14 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true,
+    es2023: true,
   },
   extends: [
     'plugin:import/typescript',
     'plugin:react/recommended',
     'prettier',
     'plugin:react/jsx-runtime',
+    // 'eslint:recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -18,6 +19,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
+    'import',
     'react',
     '@typescript-eslint',
     'jsx-a11y',
@@ -25,6 +27,12 @@ module.exports = {
     'sort-keys-fix',
   ],
   rules: {
+    // 'import/no-unused-modules': [
+    //   1,
+    //   {
+    //     unusedExports: true,
+    //   },
+    // ],
     'sort-keys-fix/sort-keys-fix': 'error',
     'typescript-sort-keys/interface': 'error',
     'typescript-sort-keys/string-enum': 'error',

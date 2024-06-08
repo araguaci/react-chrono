@@ -1,5 +1,11 @@
 import { TimelineMode } from '@models/TimelineModel';
-import { FunctionComponent, PointerEvent, useContext, useMemo } from 'react';
+import {
+  FunctionComponent,
+  PointerEvent,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react';
 import { GlobalContext } from '../../GlobalContext';
 import ChevronIcon from '../../icons/chev-right';
 import { ContentFooterProps } from './header-footer.model';
@@ -11,12 +17,29 @@ import {
 } from './timeline-card-content.styles';
 
 /**
- * This component is used to render the footer of the timeline card.
- * It renders the read more/less button, progress bar and triangle icon.
- * The read more/less button is only rendered if the content is large.
- * The progress bar and triangle icon are only rendered if the card is in slideshow mode.
+ * ContentFooter
+ *
+ * A functional component that renders the footer of the timeline card.
+ * It displays the read more/less button, progress bar, and triangle icon.
+ * The read more/less button appears only if the content is large.
+ * The progress bar and triangle icon are displayed only if the card is in slideshow mode.
+ *
+ * @property {boolean} showProgressBar - Determines if progress bar should be displayed.
+ * @property {Function} onExpand - Function called when expanding content.
+ * @property {string} triangleDir - Direction of the triangle icon.
+ * @property {boolean} showMore - Determines if 'read more' should be displayed.
+ * @property {boolean} textContentIsLarge - Determines if text content is large.
+ * @property {boolean} showReadMore - Determines if 'read more' button should be displayed.
+ * @property {number} remainInterval - Remaining interval for progress bar.
+ * @property {boolean} paused - Determines if progress is paused.
+ * @property {number} startWidth - Starting width of progress bar.
+ * @property {boolean} canShow - Determines if the element can be shown.
+ * @property {React.RefObject} progressRef - Ref to the progress bar.
+ * @property {boolean} isNested - Determines if component is nested.
+ * @property {boolean} isResuming - Determines if slideshow is resuming.
+ *
+ * @returns {JSX.Element} ContentFooter component.
  */
-
 const ContentFooter: FunctionComponent<ContentFooterProps> = ({
   showProgressBar,
   onExpand,
@@ -31,7 +54,7 @@ const ContentFooter: FunctionComponent<ContentFooterProps> = ({
   progressRef,
   isNested,
   isResuming,
-}) => {
+}: ContentFooterProps) => {
   const { mode, theme } = useContext(GlobalContext);
 
   const canShowTriangleIcon = useMemo(() => {
@@ -43,15 +66,19 @@ const ContentFooter: FunctionComponent<ContentFooterProps> = ({
     );
   }, [mode, isNested]);
 
-  const handleClick = (ev: PointerEvent) => {
-    ev.stopPropagation();
-    ev.preventDefault();
-    onExpand();
-  };
+  const handleClick = useCallback(
+    (ev: PointerEvent) => {
+      ev.stopPropagation();
+      ev.preventDefault();
+      onExpand();
+    },
+    [onExpand],
+  );
 
-  const canShowMore = useMemo(() => {
-    return showReadMore && textContentIsLarge;
-  }, [showReadMore, textContentIsLarge]);
+  const canShowMore = useMemo(
+    () => showReadMore && textContentIsLarge,
+    [showReadMore, textContentIsLarge],
+  );
 
   return (
     <>
@@ -64,7 +91,6 @@ const ContentFooter: FunctionComponent<ContentFooterProps> = ({
               onExpand();
             }
           }}
-          role="button"
           show={canShow ? 'true' : 'false'}
           theme={theme}
           tabIndex={0}
@@ -83,7 +109,6 @@ const ContentFooter: FunctionComponent<ContentFooterProps> = ({
           $paused={paused}
           ref={progressRef}
           $startWidth={startWidth}
-          role="progressbar"
           $resuming={isResuming}
         ></SlideShowProgressBar>
       )}

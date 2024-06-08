@@ -1,15 +1,31 @@
 import { TimelineVerticalModel } from '@models/TimelineVerticalModel';
-import React, { useCallback, useMemo } from 'react';
-import { TimelineOutline } from '../timeline-elements/timeline-outline/timeline-outline';
+import React, { useCallback, useContext } from 'react';
+import { GlobalContext } from '../GlobalContext';
 import TimelineVerticalItem from './timeline-vertical-item';
 import { TimelineVerticalWrapper } from './timeline-vertical.styles';
 
-// This component is used to render both tree and vertical modes
+/**
+ * TimelineVertical
+ * @property {boolean} alternateCards - Whether to alternate cards.
+ * @property {() => void} autoScroll - Function to handle auto scroll.
+ * @property {React.ReactNode} contentDetailsChildren - The content details children nodes.
+ * @property {boolean} hasFocus - Whether the timeline has focus.
+ * @property {React.ReactNode} iconChildren - The icon children nodes.
+ * @property {Array} items - The items of the timeline.
+ * @property {string} mode - The mode of the timeline.
+ * @property {() => void} onClick - Function to handle click event.
+ * @property {() => void} onElapsed - Function to handle elapsed event.
+ * @property {() => void} onOutlineSelection - Function to handle outline selection.
+ * @property {boolean} slideShowRunning - Whether the slideshow is running.
+ * @property {Object} theme - The theme of the timeline.
+ * @property {boolean} cardLess - Whether the card is less.
+ * @property {number} nestedCardHeight - The height of the nested card.
+ * @returns {JSX.Element} The TimelineVertical component.
+ */
 const TimelineVertical: React.FunctionComponent<TimelineVerticalModel> = ({
   alternateCards = true,
   autoScroll,
   contentDetailsChildren,
-  enableOutline,
   hasFocus,
   iconChildren,
   items,
@@ -32,36 +48,21 @@ const TimelineVertical: React.FunctionComponent<TimelineVerticalModel> = ({
         pointOffset: offset,
       });
     },
-    [],
+    [autoScroll],
   );
 
   // todo remove this
   const handleOnShowMore = useCallback(() => {}, []);
 
-  const outlineItems = useMemo(
-    () =>
-      items.map((item) => ({
-        id: Math.random().toString(16).slice(2),
-        name: item.title,
-      })),
-    [items.length],
-  );
+  const { isMobile } = useContext(GlobalContext);
 
   return (
     <TimelineVerticalWrapper data-testid="tree-main" role="list">
-      {enableOutline && (
-        <TimelineOutline
-          theme={theme}
-          mode={mode}
-          items={outlineItems}
-          onSelect={onOutlineSelection}
-        />
-      )}
       {items.map((item, index) => {
         let className = '';
 
         // in tree mode alternate cards position
-        if (alternateCards) {
+        if (alternateCards && !isMobile) {
           className = index % 2 === 0 ? 'left' : 'right';
         } else {
           className = 'right';
@@ -75,8 +76,8 @@ const TimelineVertical: React.FunctionComponent<TimelineVerticalModel> = ({
         const customIcon = Array.isArray(iconChildren)
           ? iconChildren[index]
           : index === 0
-          ? iconChildren
-          : null;
+            ? iconChildren
+            : null;
 
         return (
           <TimelineVerticalItem
